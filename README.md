@@ -1,5 +1,9 @@
 # recaptcha_demo
-A google recaptcha demo in Python(3.x supported) with http.server for backend verification.
+A google recaptcha demo in Python(3.x supported) with http.server for backend verification.  
+### Currently supported version
+- [x] v2 checkbox
+- [ ] v2 invisible
+- [ ] v3
     
   
 ### Prerequisites
