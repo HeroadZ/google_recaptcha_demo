@@ -24,7 +24,7 @@ pip install -r requirements.txt
 python server.py
 ```
 
-### 3. Verify
+### 4. Verify
 
 1. open the browser and visit the url: http://127.0.0.1:8000/
 2. click "I'm not a robot" button
