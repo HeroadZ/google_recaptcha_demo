@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>google recapatcha v2 checkbox demo</title>
+  <script>
+    var widgetId;
+    var onloadCallback = function () {
+      widgetId = grecaptcha.render('g-recaptcha', {
+        'sitekey': "replace me with public key",
+        'theme': 'light',
+        'size': 'normal',
+        'callback': verifyCallback,
+      });
+    };
+
+    const verifyCallback = function (response) {
+      document.getElementById('capatcha-message').textContent = "verification success locally";
+    };
+  </script>
+</head>
+
+<body>
+  <h1>google recapatcha v2 checkbox demo</h1>
+  <form id="form" method="POST">
+    <div id="g-recaptcha"></div>
+    <p id="capatcha-message"></p>
+    <button id="send" type="submit">submit</button>
+  </form>
+
+  <script>
+    document.getElementById("form").onsubmit = function (e) {
+      e.preventDefault();
+      if (grecaptcha.getResponse(widgetId).length > 0) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://127.0.0.1:8000", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+          "response_token": grecaptcha.getResponse(widgetId),
+        }))
+        xhr.onreadystatechange = function () {
+          if (this.readyState == xhr.DONE && this.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response)
+            document.getElementById('capatcha-message').textContent = `verify ${response['success']? 'success': 'fail'} from google` 
+          };
+        }
+
+        grecaptcha.reset(widgetId);
+      } else {
+        document.getElementById('capatcha-message').textContent = "please verify capatcha"
+      }
+    };
+  </script>
+  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=en" async
+    defer></script>
+</body>
+
+</html>
