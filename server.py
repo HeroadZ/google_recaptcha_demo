@@ -15,8 +15,8 @@ class MyHttpRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self._set_response()
         
-        if self.path == '/v2_checkbox.html':
-            h = open("templates/v2_checkbox.html", "rb")
+        if self.path in ['/v2_checkbox.html', '/v2_invisible.html']:
+            h = open(f"templates{self.path}", "rb")
             self.wfile.write(h.read())
         elif self.path == '/shutdown':
             global KEEP_RUNNING
