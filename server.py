@@ -4,27 +4,32 @@ import json
 
 PORT = 8000
 KEEP_RUNNING = True
+PRIVATE_KEYS = {
+    'v2_checkbox': '',
+    'v2_invisible': '',
+    'v3': '',
+}
 
 class MyHttpRequestHandler(http.server.BaseHTTPRequestHandler):
     
     def _set_response(self, content_type='text/html'):
         self.send_response(200)
-        self.send_header("Content-type", content_type)
+        self.send_header('Content-type', content_type)
         self.end_headers()
     
     def do_GET(self):
         self._set_response()
         
-        if self.path in ['/v2_checkbox.html', '/v2_invisible.html']:
-            h = open(f"templates{self.path}", "rb")
+        if self.path in ['/v2_checkbox.html', '/v2_invisible.html', '/v3.html']:
+            h = open(f'templates{self.path}', 'rb')
             self.wfile.write(h.read())
         elif self.path == '/shutdown':
             global KEEP_RUNNING
             KEEP_RUNNING = False
-            self.wfile.write("server is stopped".encode('utf-8'))
+            self.wfile.write('server is stopped'.encode('utf-8'))
             print('server is stopped')
         else:
-            h = open("templates/index.html", "rb")
+            h = open('templates/index.html', 'rb')
             self.wfile.write(h.read())
 
     def do_POST(self):
@@ -37,15 +42,15 @@ class MyHttpRequestHandler(http.server.BaseHTTPRequestHandler):
         
         # send private key and token to google for verification
         r = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
-            "secret": "replace me with private key",
-            "response": resp_json.get('response_token')
+            'secret': PRIVATE_KEYS[resp_json.get('version')],
+            'response': resp_json.get('token')
         })
         print(f'verfication result from google: {str(r.json())}')
         
         # return verification result from google to client
         self.wfile.write(r.content)
 
-my_server = http.server.HTTPServer(("localhost", PORT), MyHttpRequestHandler)
+my_server = http.server.HTTPServer(('localhost', PORT), MyHttpRequestHandler)
 
 def keep_running():
     return KEEP_RUNNING
