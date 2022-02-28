@@ -30,17 +30,23 @@
     <p id="capatcha-message"></p>
     <button id="send" type="submit">submit</button>
   </form>
-
+  <p><a href="/">back to index</a></p>
   <script>
     document.getElementById("form").onsubmit = function (e) {
       e.preventDefault();
+
+      // if response_token is not empty, it means that user has already solved the captcha
       if (grecaptcha.getResponse(widgetId).length > 0) {
+
+        // send the token to the backend for verification
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "http://127.0.0.1:8000", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
           "response_token": grecaptcha.getResponse(widgetId),
         }))
+
+        // get the verification result from the backend
         xhr.onreadystatechange = function () {
           if (this.readyState == xhr.DONE && this.status == 200) {
             var response = JSON.parse(xhr.responseText);
@@ -49,14 +55,15 @@
           };
         }
 
+        // since each token can only be verified once, we need to reset the captcha
         grecaptcha.reset(widgetId);
       } else {
+        // no captcha no submit
         document.getElementById('capatcha-message').textContent = "please verify capatcha"
       }
     };
   </script>
-  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=en" async
-    defer></script>
+  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=en" async defer></script>
 </body>
 
 </html>
