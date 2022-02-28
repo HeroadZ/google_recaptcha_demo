@@ -7,10 +7,10 @@ A google recaptcha demo in Python(3.x supported) with http.server for backend ve
     
   
 ### Prerequisites
-You should have registered google recaptcha. 
-Select the version you want, and please add `127.0.0.1` in your domain for localhost test.
+You should have registered google recaptcha.   
+Select the version you want, and please add `127.0.0.1` in your domain for localhost test.  
 You can get public key and private key from [google recaptcha admin](https://www.google.com/recaptcha/admin).
-
+  
 ### 1. Install Dependencies
 ```sh
 pip install -r requirements.txt
