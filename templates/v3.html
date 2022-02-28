@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>google recapatcha v3 demo</title>
+</head>
+
+<body>
+    <h1>google recapatcha v3 demo</h1>
+    <form id="form" method="POST">
+        <p id="capatcha-message"></p>
+        <button id="send" type="submit">submit</button>
+    </form>
+    <p><a href="/">back to index</a></p>
+    <script>
+        const public_key = ''
+        document.getElementById("form").onsubmit = function (e) {
+            e.preventDefault();
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute(public_key, { action: 'submit' }).then(function (token) {
+                    // send the token to the backend for verification
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "http://127.0.0.1:8000", true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify({
+                        "token": token,
+                        "version": "v3",
+                    }))
+
+                    // get the verification result from the backend
+                    xhr.onreadystatechange = function () {
+                        if (this.readyState == xhr.DONE && this.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            console.log(response)
+                            document.getElementById('capatcha-message').textContent = `verify ${response['success'] ? 'success' : 'fail'} from google, ` +
+                                `and score is [${response['score']}] for action [${response['action']}].`
+                        };
+                    }
+                });
+            })
+        };
+    </script>
+    <script id="grecaptcha-js" async defer></script>
+    <script>
+        document.getElementById("grecaptcha-js").src = `https://www.google.com/recaptcha/api.js?render=${public_key}`
+    </script>
+</body>
+
+</html>
