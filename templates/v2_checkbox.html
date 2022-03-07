@@ -12,10 +12,10 @@
         var onloadCallback = function () {
             widgetId = grecaptcha.render('g-recaptcha', {
                 'sitekey': public_key,
-                'theme': 'light',
-                'size': 'normal',
-                'callback': verifyCallback,
-            });
+                'theme': 'light',  //主题颜色，有light与dark两个值可选
+                'size': 'normal',  //尺寸规则，有normal与compact两个值可选
+                'callback': verifyCallback, //验证成功回调
+            })
         };
 
         const verifyCallback = function (token) {
